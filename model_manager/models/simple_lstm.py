@@ -4,9 +4,10 @@ from keras.models import Model
 from keras.layers import Dense, Dropout, LSTM, Input, Activation
 
 history_points = 200
+shape = (history_points, 5)
 
 # simple lstm model architecture
-lstm_input = Input(shape=(history_points, 5), name='lstm_input')
+lstm_input = Input(shape=shape, name='lstm_input')
 x = LSTM(100, name='lstm_0')(lstm_input)
 x = Dropout(0.2, name='lstm_dropout_0')(x)
 x = Dense(64, name='dense_0')(x)
