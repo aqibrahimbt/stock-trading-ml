@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn import preprocessing
 import numpy as np
 
-history_points = 50
+history_points = 200 ## number of stocks information it neads to make a prediction (approximately a day)
 
 
 def csv_to_dataset(csv_path):
