@@ -9,7 +9,7 @@ kwargs_default_compile = {
     'loss': 'mse'
 }
 
-log_dir = 'logs/fit/' + datetime.now().stftime('%Y%m%d-%H%M%S')
+log_dir = 'logs/fit/' + datetime.now().strftime('%Y%m%d-%H%M%S')
 tensorboard_callback = callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
 kwargs_default_fit = {
     'batch_size': 32,
