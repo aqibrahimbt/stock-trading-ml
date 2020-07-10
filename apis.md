@@ -25,3 +25,7 @@
 - indeed still (again) in service 
 - possibly unlimited amount of req?
 ``pip install yfinance``
+
+
+## Additional Data Sources
+- https://github.com/wilsonfreitas/awesome-quant#data-sources
