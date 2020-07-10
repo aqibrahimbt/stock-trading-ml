@@ -1,3 +1,4 @@
+### Testing Yahoo Finance
 import yfinance as yf
 
 data = yf.download( 
@@ -32,3 +33,18 @@ data = yf.download(
 
 
 data.info
+
+
+### Testing pandas datareader
+from pandas_datareader import data
+import matplotlib.pyplot as plt
+import pandas as pd
+
+tickers = ['AAPL', 'MSFT', '^GSPC']
+
+# Available data from 01/01/2000 until 12/31/2016.
+start_date = '2010-01-01'
+end_date = '2016-12-31'
+
+# Use pandas_reader.data.DataReader to load the desired data. As simple as that.
+panel_data = data.DataReader('INPX', 'iex', start_date, end_date)
