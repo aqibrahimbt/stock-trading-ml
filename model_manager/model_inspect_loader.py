@@ -12,11 +12,26 @@ class ModelInspectLoader(InspectLoader):
         self.input_shape = input_shape
         self.output_mask = output_mask
 
+    def import_model(self, fullname):
+        """Return a model from the specified file as if it where imported.
+
+        :param fullname: TODO
+        :returns: TODO
+
+        """
+        code = self.get_code(fullname)
+        # python < 3.7
+        nmspace = {}
+        exec(code, nmspace)
+        # python >= 3.7:
+        # exec(code, (nmspace := {}))
+        return nmspace['model']
+
     def get_source(self, fullname):
         """Provide source code object for a module in the models directory.
 
         :param fullname: str or pathlib.Path
-        :returns: keras.model
+        :returns: str
 
         """
         with open(fullname) as f:
@@ -31,24 +46,28 @@ class ModelInspectLoader(InspectLoader):
     def transform_ast(self, tree):
         """Transforms an ast to fit to the requested attributes.
 
-        :param tree: TODO
-        :returns: TODO
+        :param tree: ast - python abstract syntax tree
+        :returns: ast
 
         """
         class ReplaceShapeNode(NodeTransformer):
             """Small implementation of a NodeTransformer class."""
-            shape_string = str(self.input_shape)
-            tuple_node = parse(shape_string).body[0].value
+            if self.input_shape:
+                shape_string = str(self.input_shape)
+                # parsing shape_string to an ast node defining a tuple
+                tuple_node = parse(shape_string).body[0].value
+            else:
+                tuple_node = None
 
             def visit_Assign(self, node):
                 """Define behaviour when visiting Assign-node."""
-                if node.targets[0].id == 'shape':
+                if node.targets[0].id == 'shape' and self.tuple_node:
                     node.value = self.tuple_node
                     print('Replaced!')
                 return node
 
         tree = ReplaceShapeNode().visit(tree)
-        fix_missing_locations(tree)
+        fix_missing_locations(tree)  # fixing node line numbers for compiler
         return tree
 
     def get_code(self, fullname):
@@ -59,22 +78,11 @@ class ModelInspectLoader(InspectLoader):
 
         """
         tree = self.get_ast(fullname)
-        tree = self.transform_ast(tree)
-        print(tree)
-        print(ast.dump(tree))
-        code = compile(tree, filename='<ast>', mode='exec')
+        transformed = self.transform_ast(tree)
+        print(transformed)
+        print(ast.dump(transformed))
+        code = compile(transformed, filename='<ast>', mode='exec')
         return code
-
-    def import_model(self, fullname):
-        """Return a model from the specified file as if it where imported.
-
-        :param fullname: TODO
-        :returns: TODO
-
-        """
-        code = self.get_code(fullname)
-        exec(code, (nmspace := {}))
-        return nmspace['model']
 
     def is_package(self, fullname):
         """TODO: Docstring for is_package.

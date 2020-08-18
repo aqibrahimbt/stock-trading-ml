@@ -18,4 +18,4 @@ output = Activation('linear', name='linear_output')(x)
 model = Model(inputs=lstm_input, outputs=output)
 
 print(model)
-print(model.get_input_at(0).shape)
+print(model.input_shape)

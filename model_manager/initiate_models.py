@@ -5,6 +5,7 @@ from importlib import import_module as imp
 # from tensorflow.train import load_checkpoint
 
 from model_manager.models_util import load_model
+from model_manager.model_inspect_loader import ModelInspectLoader as MIL
 # from model_manager.models_util import save_model
 # from .models_util import save_model
 
@@ -13,6 +14,7 @@ CHECKPOINT_PATH = Path(__file__).parent / 'checkpoints'
 BUILD_PATH = Path(__file__).parent / 'build'
 
 
+# obsolete, should be deleted soon
 def import_model(name):
     """Import all models from given module from MODELS_PATH.
 
@@ -33,7 +35,7 @@ def import_model(name):
     return model_list[-1]
 
 
-def initialize_model(name):
+def initialize_model(name, data_shape):
     """Initializes all models of a given module.
 
     :name: str
@@ -41,12 +43,15 @@ def initialize_model(name):
     :returns: None
 
     """
-    model = import_model(name)
-    model = get_lates_ckpt(name, model)
+    loader = MIL(input_shape=data_shape)
+    name_path = MODELS_PATH / (name + '.py')
+    model = loader.import_model(name_path)
+    # model = get_lates_ckpt(name, model)
     return model
     # TODO: Finish Training and come back to use correct conventions.
 
 
+# unused, still needs proper setup
 def get_lates_ckpt(name, model):
     """Find and return path to latest checkpoint or saved model.
 
