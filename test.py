@@ -28,7 +28,7 @@ def data_to_recurrent(history_points, data):
         yield data[index:index + history_points]
 
 
-history_points = 4
+history_points = 50
 # print(*map(lambda x: x.to_numpy(), data_to_recurrent(history_points, df)))
 data = np.stack(data_to_recurrent(history_points, df))
 print(data)

@@ -3,6 +3,7 @@
 from datetime import datetime
 from keras import optimizers, callbacks
 from model_manager.initiate_models import initialize_model
+from model_manager.models_util import save_model, model_naming_convention
 
 kwargs_default_compile = {
     'optimizer': optimizers.Adam(lr=.0005),
@@ -26,19 +27,20 @@ kwargs_default_fit = {
 
 
 def train(name, **kwargs):
-    """Wrapping function for compile_model, train_model, initialize_model.
+    """Function that implements a workflow for training of predefined models.
 
     :param name: TODO
-    :param data: NumpyArray
     :param **kwargs: TODO
     :returns: TODO
 
     """
     data = kwargs['x']
-    model = initialize_model(name, data.shape[1:])
-    # fullname = model_naming_convention(name, shape)
+    shape = data.shape[1:]
+    fullname = model_naming_convention(name, shape)
+    model = initialize_model(name, shape)
     compiled = compile_model(model)
     history, trained = train_model(compiled, **kwargs)
+    save_model(trained, fullname)
     return history, trained
 
 
