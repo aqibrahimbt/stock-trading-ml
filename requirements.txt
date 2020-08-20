@@ -1,5 +1,6 @@
 alpha_vantage
 pandas
+pandas datadownloader
 numpy
 sklearn
 keras
