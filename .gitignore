@@ -108,3 +108,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# vim & swap file
+*.swp
+*.swo
+*~

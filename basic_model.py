@@ -11,10 +11,9 @@ tf.random.set_seed(4)
 from util import csv_to_dataset, history_points
 import matplotlib.pyplot as plt
 
-
-
 # dataset
-ohlcv_histories, _, next_day_open_values, unscaled_y, y_normaliser = csv_to_dataset('IBM_daily.csv')
+ohlcv_histories, _, next_day_open_values, unscaled_y, y_normaliser = csv_to_dataset(
+    'IBM_daily.csv')
 
 test_split = 0.9
 n = int(ohlcv_histories.shape[0] * test_split)
@@ -30,7 +29,6 @@ unscaled_y_test = unscaled_y[n:]
 print(ohlcv_train.shape)
 print(ohlcv_test.shape)
 
-
 # model architecture
 lstm_input = Input(shape=(history_points, 5), name='lstm_input')
 x = LSTM(100, name='lstm_0')(lstm_input)
@@ -41,13 +39,19 @@ x = Dense(1, name='dense_1')(x)
 output = Activation('linear', name='linear_output')(x)
 
 log_dir = "logs/fit/" + datetime.now().strftime("%Y%m%d-%H%M%S")
-tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir,
+                                                      histogram_freq=1)
 
 model = Model(inputs=lstm_input, outputs=output)
 adam = optimizers.Adam(lr=0.0005)
 model.compile(optimizer=adam, loss='mse')
-model.fit(x=ohlcv_train, y=y_train, batch_size=32, epochs=100, shuffle=True, validation_split=0.1, callbacks=[tensorboard_callback])
-
+model.fit(x=ohlcv_train,
+          y=y_train,
+          batch_size=32,
+          epochs=100,
+          shuffle=True,
+          validation_split=0.1,
+          callbacks=[tensorboard_callback])
 
 # evaluation
 y_test_predicted = model.predict(ohlcv_test)
@@ -57,9 +61,9 @@ y_predicted = y_normaliser.inverse_transform(y_predicted)
 
 assert unscaled_y_test.shape == y_test_predicted.shape
 real_mse = np.mean(np.square(unscaled_y_test - y_test_predicted))
-scaled_mse = real_mse / (np.max(unscaled_y_test) - np.min(unscaled_y_test)) * 100
+scaled_mse = real_mse / (np.max(unscaled_y_test) -
+                         np.min(unscaled_y_test)) * 100
 print(scaled_mse)
-
 
 ## pLot the real vs predicted
 plt.gcf().set_size_inches(22, 15, forward=True)
