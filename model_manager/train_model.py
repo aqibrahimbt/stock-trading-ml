@@ -6,7 +6,7 @@ from model_manager.initiate_models import initialize_model
 from model_manager.models_util import save_model, model_naming_convention
 
 kwargs_default_compile = {
-    'optimizer': optimizers.Adam(lr=.0005),
+    'optimizer': optimizers.Adam(),
     'loss': 'mse',
     # 'metrics': ,
     # 'loss_weights': ,
@@ -22,7 +22,6 @@ kwargs_default_fit = {
     'shuffle': True,
     'validation_split': 0.1,
     'callbacks': [tensorboard_callback]
-
 }
 
 

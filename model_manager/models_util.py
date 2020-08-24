@@ -18,7 +18,7 @@ def save_model(model, fullname, force=False):  # TODO: Test it.
     p = BUILD_PATH / fullname
     if not force and p.exists():
         ask_permission(f'File {p} already exists, save anyway?')
-    model.save_weights(p)
+    model.save_weights(str(p))
 
 
 def load_model(model, fullname, base_path=BUILD_PATH):  # TODO: Test it.
