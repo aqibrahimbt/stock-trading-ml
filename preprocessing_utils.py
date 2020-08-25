@@ -12,21 +12,32 @@ def normalize_stock_data(df):
     """Normalizes a given stock timeseries."""
     # normalize the volume data individually
     df['Volume'] = df['Volume'] / max(df['Volume'])
-    rest = df.loc(['High', 'Low', 'Open', 'Close', 'Adj. Close'])
+    rest = df.loc[:, ['High', 'Low', 'Open', 'Close', 'Adj Close']]
     rest = rest / max(df['High'])
     rest *= MARGIN_FACTOR
 
 
-def data_to_recurrent(history_points, data):
+def data_to_recurrent(history_points, df):
     """Yield data slices of length given by the history_points.
 
     :history_points: int
-    :data: numpy.ndarray
-    :yields: numpy.ndarray
+    :data: pandas.DataFrame
+    :yields: (pandas.DataFrame, pandas.DataFrame)
 
     """
-    for ind in range(data.shape[0] - history_points - 1):
-        yield data[ind:ind + history_points], data[ind + history_points + 1]
+    for ind in range(df.shape[0] - history_points - 1):
+        print(df.iloc[ind:ind + history_points, :])
+        print(
+            ind,
+            pd.DataFrame({
+                'x': df.iloc[ind:ind + history_points, :],
+                'y': df.iloc[ind + history_points + 1, :]
+            }))
+
+        yield pd.DataFrame({
+            'x': df.iloc[ind:ind + history_points, :],
+            'y': df.iloc[ind + history_points + 1, :]
+        })
 
 
 def prepare_stock_data(df, history_points=50, validation_split=0.8):
@@ -35,11 +46,11 @@ def prepare_stock_data(df, history_points=50, validation_split=0.8):
     normalize_stock_data(df)
 
     # make the dataset suitable for RNNs
-    df = pd.DataFrame((*data_to_recurrent(history_points, df)))
+    df = pd.concat(data_to_recurrent(history_points, df), axis=1)
 
     # split the data into training and validation data
-    train = tf.Tensor(df[:len(df) * validation_split, :])
-    test = tf.Tensor(df[len(df) * validation_split, :])
+    train = tf.constant(df.iloc[:int(len(df) * validation_split), :])
+    test = tf.constant(df.iloc[int(len(df) * validation_split), :])
     print(train, test)
     return train, test
 
