@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class APIBaseClass(ABC):
@@ -17,5 +17,15 @@ class APIBaseClass(ABC):
         self.creds = creds
 
     @abstractmethod
-    def request_stock_data(self, name: str, start: datetime, end: datetime):
-        ...
+    def request(self,
+                name: str,
+                start: datetime = datetime.today() - timedelta(days=1000),
+                end: datetime = datetime.today()):
+        """Request stock data from a given stock in a standardized format.
+
+        :name:  Identifier token for the requested stock.
+        :start: Starting date for the requested stock data time seriers.
+        :end: End date for the requested stock data time series.
+        :returns: Stock data for given identifier token in a standardized
+                  format.
+        """
