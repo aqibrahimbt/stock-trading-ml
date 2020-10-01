@@ -2,6 +2,7 @@
 
 from abc import ABC, abstractmethod
 
+from pandas import DataFrame
 from datetime import datetime, timedelta
 
 
@@ -17,10 +18,14 @@ class APIBaseClass(ABC):
         self.creds = creds
 
     @abstractmethod
-    def request(self,
-                name: str,
-                start: datetime = datetime.today() - timedelta(days=1000),
-                end: datetime = datetime.today()):
+    def request(
+        self,
+        name: str,
+        *args,
+        start: datetime = datetime.today() - timedelta(days=1000),
+        end: datetime = datetime.today(),
+        **kwargs,
+    ) -> DataFrame:
         """Request stock data from a given stock in a standardized format.
 
         :name:  Identifier token for the requested stock.
@@ -29,3 +34,4 @@ class APIBaseClass(ABC):
         :returns: Stock data for given identifier token in a standardized
                   format.
         """
+        pass
