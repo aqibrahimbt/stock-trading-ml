@@ -1,6 +1,8 @@
 """ABC that implements stock interfaces of the pandas_datareader package."""
 
 from pandas_datareader.data import DataReader as web
+from pandas import DataFrame
+from abc import abstractmethod
 
 from functools import partial
 
@@ -39,10 +41,15 @@ class PandasDatareaderBase(APIBaseClass):
         # this rather peculiar syntax makes sure arguments passed through
         # kwargs take precedent
 
-        return web(name, *args, **kwargs)
+        return self.normalize_data_format(web(name, *args, **kwargs))
 
     @staticmethod
     def _build_doc(super_doc, sub_doc):
         """Merges documentation for a function of a super class."""
         super_list = super_doc.splitlines(keepends=True)[2:]
         return sub_doc[:-8] + "".join(super_list)
+
+    @staticmethod
+    @abstractmethod
+    def normalize_data_format(data: DataFrame) -> DataFrame:
+        pass
