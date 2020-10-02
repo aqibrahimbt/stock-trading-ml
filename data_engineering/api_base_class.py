@@ -35,3 +35,8 @@ class APIBaseClass(ABC):
                   format.
         """
         pass
+
+    def request_to_csv(self, filename, *args, **kwargs):
+        """Saves a specified request call to disk in csv format."""
+        df = self.request(*args, **args)
+        df.to_csv(path_or_buf=filename)
